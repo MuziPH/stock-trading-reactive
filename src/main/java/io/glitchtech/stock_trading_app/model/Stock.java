@@ -17,11 +17,15 @@ import lombok.NonNull;
 @Builder
 @Document
 public class Stock {
+
     @Id
     private String id;
+
     private String name;
+
     @NonNull
     private BigDecimal price;
+
     private String currency;
 
 }

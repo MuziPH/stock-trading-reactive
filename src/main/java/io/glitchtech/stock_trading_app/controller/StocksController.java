@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.glitchtech.stock_trading_app.dto.StockRequest;
+import io.glitchtech.stock_trading_app.dto.StockResponse;
 import io.glitchtech.stock_trading_app.model.Stock;
 import io.glitchtech.stock_trading_app.service.StocksService;
 import lombok.AllArgsConstructor;
@@ -14,23 +16,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/stocks")
 @AllArgsConstructor
+@RequestMapping("/stocks")
 public class StocksController {
     private StocksService stocksService;
 
     @GetMapping("/{id}")
-    public Mono<Stock> getOneStock(@PathVariable String id) {
+    public Mono<StockResponse> getOneStock(@PathVariable("id") String id) {
         return stocksService.getOneStock(id);
     }
 
     @GetMapping
-    public Flux<Stock> getAllStocks() {
+    public Flux<StockResponse> getAllStocks() {
         return stocksService.getAllStocks();
     }
 
     @PostMapping
-    public Mono<Stock> createStock(@RequestBody Stock stock) {
-        return stocksService.createStock(stock);
+    public Mono<StockResponse> createStock(@RequestBody StockRequest stockRequest) {
+        return stocksService.createStock(stockRequest);
     }
 }
