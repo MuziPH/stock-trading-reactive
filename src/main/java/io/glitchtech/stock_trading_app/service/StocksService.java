@@ -10,10 +10,12 @@ import io.glitchtech.stock_trading_app.exception.StockCreationException;
 import io.glitchtech.stock_trading_app.exception.StockNotFoundException;
 import io.glitchtech.stock_trading_app.repository.StocksRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class StocksService {
     private StocksRepository stocksRepository;
@@ -27,14 +29,26 @@ public class StocksService {
                         Mono.error(
                                 new StockNotFoundException("Stock not found with id: " + id)// Initilaize with Throwable
                                                                                             // to handle the exception
-                        ));
+                        ))
+                .doFirst(() -> log.info("Retrieving stock with id:{} ", id))
+                .doOnNext(stock -> log.info("Stock found with {}", stock))
+                .doOnError(exception -> log.error("Something went wrong with signal type: {}", exception))
+                .doOnTerminate(() -> log.info("Finalized retriving stock"))
+                .doFinally(signalType -> log.info("Finalised retrieving stock with signal type: {}", signalType))
+
+        ;
     }
 
     // Return a list of stocks
     public Flux<StockResponse> getAllStocks(BigDecimal priceGreaterThan) {
         return stocksRepository.findAll()
                 .filter(stock -> stock.getPrice().compareTo(priceGreaterThan) > 0)
-                .map(StockResponse::fromModel);
+                .map(StockResponse::fromModel)
+                .doFirst(() -> log.info("Retrieving all stocks"))
+                .doOnNext(stockResponse -> log.info("Stock found: {}", stockResponse))
+                .doOnError(exception -> log.warn("Something went wrong while retrieving stocks", exception))
+                .doOnTerminate(() -> log.info("Finalized retrieving stocks"))
+                .doFinally(signalType -> log.info("Finalized retrieving stocks with signal type: {}", signalType));
     }
 
     // Return a fallback value when you encouter an error
