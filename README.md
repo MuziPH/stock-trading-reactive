@@ -1,1 +1,1 @@
-# Project Reactor - Exception Handlers.
+# Project Reactor - OnError Operator.

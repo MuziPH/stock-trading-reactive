@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import io.glitchtech.stock_trading_app.dto.StockRequest;
 import io.glitchtech.stock_trading_app.dto.StockResponse;
+import io.glitchtech.stock_trading_app.exception.StockCreationException;
 import io.glitchtech.stock_trading_app.exception.StockNotFoundException;
 import io.glitchtech.stock_trading_app.repository.StocksRepository;
 import lombok.AllArgsConstructor;
@@ -36,8 +37,19 @@ public class StocksService {
                 .map(StockResponse::fromModel);
     }
 
+    // Return a fallback value when you encouter an error
     public Mono<StockResponse> createStock(StockRequest stockRequest) {
-        return stocksRepository.save(stockRequest.toModel()) // Convert incoming request to the entity
-                .map(StockResponse::fromModel); // Convert back the model/entity to the response entity
+        return Mono.just(stockRequest)
+                // Convert incoming request to the stock entity/model
+                .map(StockRequest::toModel)
+                // flatMap unwraps the Mono<Stock> returned by stocksRepository.save(stock) to
+                // Stock
+                .flatMap(stock -> stocksRepository.save(stock))
+                // Transfomr Stock model/entity to StockResponse for http resp
+                .map(StockResponse::fromModel)
+                // In case of error from above return below fallback StockResponse object
+                // .onErrorReturn(StockResponse.builder().build());
+                // Convert thrown exception to a custom exception with onErrorMap
+                .onErrorMap(exception -> new StockCreationException(exception.getMessage()));
     }
 }

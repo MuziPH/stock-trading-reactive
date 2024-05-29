@@ -14,7 +14,7 @@ public class StockCreationException extends RuntimeException {
         // Build the ProblemDetail using the returned Http status and the
         // RuntimeException message
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, getMessage());
-        // Set the ProblemDetail Title message
+        // Set the ProblemDetail Title message in the JSON resp
         problemDetail.setTitle("Unable to Create Stock");
         return problemDetail;
     }
