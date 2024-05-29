@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import io.glitchtech.stock_trading_app.dto.StockRequest;
 import io.glitchtech.stock_trading_app.dto.StockResponse;
+import io.glitchtech.stock_trading_app.exception.StockNotFoundException;
 import io.glitchtech.stock_trading_app.repository.StocksRepository;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Flux;
@@ -20,7 +21,12 @@ public class StocksService {
     public Mono<StockResponse> getOneStock(String id) {
         // Convert the internal model from the DB to the required http response
         return stocksRepository.findById(id)
-                .map(stock -> StockResponse.fromModel(stock));
+                .map(stock -> StockResponse.fromModel(stock))// Returns empty Mono if not found
+                .switchIfEmpty( // if Mono is empty return error
+                        Mono.error(
+                                new StockNotFoundException("Stock not found with id: " + id)// Initilaize with Throwable
+                                                                                            // to handle the exception
+                        ));
     }
 
     // Return a list of stocks

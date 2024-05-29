@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.glitchtech.stock_trading_app.dto.StockRequest;
 import io.glitchtech.stock_trading_app.dto.StockResponse;
-import io.glitchtech.stock_trading_app.model.Stock;
 import io.glitchtech.stock_trading_app.service.StocksService;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Flux;
