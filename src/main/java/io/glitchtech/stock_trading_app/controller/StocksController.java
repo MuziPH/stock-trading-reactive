@@ -1,8 +1,11 @@
 package io.glitchtech.stock_trading_app.controller;
 
+import java.math.BigDecimal;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.glitchtech.stock_trading_app.dto.StockRequest;
@@ -27,8 +30,9 @@ public class StocksController {
     }
 
     @GetMapping
-    public Flux<StockResponse> getAllStocks() {
-        return stocksService.getAllStocks();
+    public Flux<StockResponse> getAllStocks(
+            @RequestParam(required = false, defaultValue = "0", name = "priceGreaterThan") BigDecimal priceGreaterThan) {
+        return stocksService.getAllStocks(priceGreaterThan);
     }
 
     @PostMapping

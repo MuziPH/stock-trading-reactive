@@ -1,5 +1,7 @@
 package io.glitchtech.stock_trading_app.service;
 
+import java.math.BigDecimal;
+
 import org.springframework.stereotype.Service;
 
 import io.glitchtech.stock_trading_app.dto.StockRequest;
@@ -22,8 +24,9 @@ public class StocksService {
     }
 
     // Return a list of stocks
-    public Flux<StockResponse> getAllStocks() {
+    public Flux<StockResponse> getAllStocks(BigDecimal priceGreaterThan) {
         return stocksRepository.findAll()
+                .filter(stock -> stock.getPrice().compareTo(priceGreaterThan) > 0)
                 .map(StockResponse::fromModel);
     }
 
