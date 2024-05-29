@@ -1,1 +1,1 @@
-# Reactive programming - Project Reactor - Filter Operator.
+# Project Reactor - Filter Operator.
